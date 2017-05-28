@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Android2017 on 5/16/2017.
@@ -21,7 +22,7 @@ public class MovieDataSource {
         void onDataArrived(ArrayList<Movie> movies, Exception e);
     }
 
-    public static void getMovies(final OnDataArrivedListener listener) {
+    public static void fetchMovies(final OnDataArrivedListener listener) {
         final Thread movieTread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -37,8 +38,9 @@ public class MovieDataSource {
         movieTread.start();
     }
 
-    private static ArrayList<Movie> parse(String json) throws JSONException {
-        ArrayList<Movie> movies = new ArrayList<>();
+    static ArrayList<Movie> movies = new ArrayList<>();
+
+    public static ArrayList<Movie> parse(String json) throws JSONException {
         JSONArray moviesArray = new JSONArray(json);
         for (int i = 0; i < moviesArray.length(); i++) {
             ArrayList<String> genres = new ArrayList<String>();
@@ -56,6 +58,10 @@ public class MovieDataSource {
             Movie movie = new Movie(title, image, genres, releaseYear, rating);
             movies.add(movie);
         }
+        return movies;
+    }
+
+    public static List<Movie> getMovies(){
         return movies;
     }
 

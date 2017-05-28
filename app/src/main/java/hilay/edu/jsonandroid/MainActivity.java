@@ -2,27 +2,20 @@ package hilay.edu.jsonandroid;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieDataSource.OnDataArrivedListener {
     ArrayList<Movie> movies = new ArrayList<>();
-    TextView tvMovies;
+    RecyclerView rvMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +23,13 @@ public class MainActivity extends AppCompatActivity implements MovieDataSource.O
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        tvMovies = (TextView) findViewById(R.id.tvMovies);
+        rvMovies = (RecyclerView) findViewById(R.id.rvMovies);
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        MovieDataSource.getMovies(this);
+        MovieDataSource.fetchMovies(this);
     }
 
     @Override
@@ -64,11 +59,9 @@ public class MainActivity extends AppCompatActivity implements MovieDataSource.O
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (e == null) {
-                    tvMovies.setText(movies.toString());
-                } else {
-                    Toast.makeText(MainActivity.this, "Error fetching movies", Toast.LENGTH_SHORT).show();
-                }
+                MovieAdapter adapter = new MovieAdapter(MainActivity.this, MovieDataSource.getMovies());
+                rvMovies.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                rvMovies.setAdapter(adapter);
             }
         });
     }
